@@ -1,0 +1,44 @@
+name: Build DrawBridge IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned .app
+        run: |
+          xcodebuild \
+            -project DrawBridge.xcodeproj \
+            -scheme DrawBridge \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package unsigned .ipa
+        run: |
+          mkdir -p Payload
+          cp -R "build/Build/Products/Release-iphoneos/DrawBridge.app" Payload/
+          zip -r DrawBridge-unsigned.ipa Payload
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DrawBridge-unsigned-ipa
+          path: DrawBridge-unsigned.ipa

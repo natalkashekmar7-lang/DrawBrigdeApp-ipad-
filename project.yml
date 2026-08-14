@@ -1,0 +1,28 @@
+name: DrawBridge
+options:
+  bundleIdPrefix: com.yourname.drawbridge
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  DrawBridge:
+    type: application
+    platform: iOS
+    sources:
+      - DrawBridge
+    info:
+      path: DrawBridge/Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSLocalNetworkUsageDescription: "Потрібно для з'єднання з Windows-комп'ютером"
+        NSBonjourServices:
+          - _drawbridge._tcp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.drawbridge
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        # Без цього CI не зможе підписати автоматично — підписуємо пізніше
+        # локально через Sideloadly, тому тут збірка "unsigned"
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
